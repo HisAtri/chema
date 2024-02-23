@@ -10,6 +10,11 @@ The average mass taking into account the abundance of isotopes in nature.
 
 The mass of the most stable isotope.
 
+## Data Source
+
+- [International Atomic Energy Agency (IAEA)](https://www-nds.iaea.org/)
+- [International Union of Pure and Applied Chemistry (IUPAC)](https://www.iupac.org/)
+
 # Usage
 
 ## Install

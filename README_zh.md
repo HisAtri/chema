@@ -10,6 +10,11 @@
 
 按照最稳定的核素取值。
 
+## 数据来源
+
+- [国际原子能机构（IAEA）](https://www-nds.iaea.org/)
+- [国际纯粹与应用化学联合会（IUPAC）](https://www.iupac.org/)
+
 # 使用方法
 
 ## 安装
