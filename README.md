@@ -1,2 +1,11 @@
-# chema
-Easily calculate the m.w. and e.m of a molecule
+# 说明
+
+## 摩尔质量和精确质量
+
+### 摩尔质量
+
+考虑到自然界同位素丰度的平均质量。
+
+### 精确质量
+
+按照最稳定的核素取值。
