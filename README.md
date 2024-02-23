@@ -1,11 +1,43 @@
-# 说明
+# Explaintions
 
-## 摩尔质量和精确质量
+## Mol.Wt and Exact Mass
 
-### 摩尔质量
+### Mol.Wt
 
-考虑到自然界同位素丰度的平均质量。
+The average mass taking into account the abundance of isotopes in nature.
 
-### 精确质量
+### Exact Mass
 
-按照最稳定的核素取值。
+The mass of the most stable isotope.
+
+# Usage
+
+## Install
+
+```bash
+pip install chemax
+```
+
+## Import
+
+```python
+from chemax import Molecule
+```
+
+## Create Molecule Object
+
+```python
+from chemax import Molecule
+
+molecule = Molecule.simple_generate('H2O')
+print(molecule.mol_wt)
+print(molecule.exact_mass)
+print(molecule.electric_charge)
+```
+
+## Accepted Formula
+
+- Simple Formula: `H2O`
+- Structural Formula: `CH3CH2OH`, `CH3(CH2)2OH`
+- Hydrogen Isotopes: `D2O`, `T2O`, `CDCl3`(Chloroform-d)
+- Ionic Formula: `{COO}-`, `{CH2(COO)2}2-`
