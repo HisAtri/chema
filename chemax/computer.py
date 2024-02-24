@@ -1,60 +1,45 @@
-def simple(formula: str) -> dict:
-    """
-    简单的分子式解析
-    不包括括号递归解析
-    基础功能函数
-    :param formula:
-    :return:
-    """
-    atom_stack = []
-    _in_brackets = False
-    _atom_ = ''
-    _atom_num_ = ''
+from .datas import ABUNDANCE, GROUPS, NUCLIDE
+
+
+def real_formula(formula: str) -> str:
+    true_formula = ''
+    storage_cache = ''
+    element_list = list(ABUNDANCE.keys()) + list(NUCLIDE.keys())
+    in_square_brackets = False
     finger = 0
-    for word in formula:
+    for i in formula:
         finger += 1
-        # 如果在方括号内，只能有数字
-        if _in_brackets and _atom_ and word != ']':
-            if not word.isdigit():
-                raise ValueError(
-                    f"Invalid character '{word}' in formula[{finger}]: \n'{formula}'\n{finger * ' ' + '^'}")
-            _atom_ += word
+        if i == '[':
+            in_square_brackets = True
+            storage_cache += i
             continue
-        # 如果是大写字母或*，表示原子的开始
-        if word.isupper() or word == "*":
-            # 如果之前有原子
-            if _atom_:
-                atom_stack.append((_atom_, _atom_num_))
-                _atom_, _atom_num_ = '', ''
-            _atom_ = word
-        # 如果是小写字母，表示原子的延续
-        elif word.islower():
-            _atom_ += word
-        # 如果是数字，表示原子的数量
-        elif word.isdigit():
-            _atom_num_ += word
-        elif word == '[':
-            if not _atom_ or _atom_num_:
-                raise ValueError(
-                    f"Invalid character '{word}' in formula[{finger}]: \n'{formula}'\n{finger * ' ' + '^'}")
-            _in_brackets = True
-            _atom_ += word
-        elif word == ']':
-            _in_brackets = False
-            _atom_ += word
+        elif i == ']':
+            in_square_brackets = False
+            storage_cache += i
+            continue
+        if in_square_brackets:
+            storage_cache += i
+            continue
+        if (i.isupper() or i == '*') and not storage_cache:
+            storage_cache += i
+        elif (i.islower()) and storage_cache:
+            storage_cache += i
+        elif i == '(' and not storage_cache:
+            true_formula += i
         else:
-            raise ValueError(f"Invalid character '{word}' in formula[{finger}]: \n'{formula}'\n{finger * ' ' + '^'}")
-
-    if _atom_:
-        atom_stack.append((_atom_, _atom_num_))
-
-    molecule_dict = {}
-    # 合并元素
-    for _atom in atom_stack:
-        _atom_name, _atom_num = _atom
-        molecule_dict[_atom_name] = molecule_dict.get(_atom_name, 0) + (int(_atom_num) if _atom_num else 1)
-
-    return molecule_dict
+            if storage_cache in GROUPS.keys():
+                storage_cache = GROUPS[storage_cache] + i
+                true_formula += storage_cache
+                storage_cache = ''
+            else:
+                storage_cache += i
+                true_formula += storage_cache
+                storage_cache = ''
+    if storage_cache in GROUPS.keys():
+        true_formula += GROUPS[storage_cache]
+    else:
+        true_formula += storage_cache
+    return true_formula
 
 
 def simple_parser(formula: str) -> list:
@@ -109,7 +94,7 @@ def simple_parser(formula: str) -> list:
                     _atom_num_ += word
                 # 方括号开始，其中内容为中子数，即注释同位素
                 elif word == '[':
-                    if not _atom_ or _atom_num_:
+                    if not _atom_ or _atom_num_ or not isinstance(_atom_, str):
                         raise ValueError(
                             f"Invalid character '{word}' in formula[{finger}]: \n'{formula}'\n{finger * ' ' + '^'}")
                     _in_brackets = True
@@ -128,7 +113,8 @@ def simple_parser(formula: str) -> list:
                     stack_in_position = 0
                 # 堆栈等于0时，右圆括号为非法字符，无需特殊处理
                 else:
-                    raise ValueError(f"Unexpected character '{word}' in formula[{finger}]: \n'{global_formula}'\n{finger * ' ' + '^'}")
+                    raise ValueError(
+                        f"Unexpected character '{word}' in formula[{finger}]: \n'{global_formula}'\n{finger * ' ' + '^'}")
 
             else:
                 # 堆栈内，只解析圆括号的堆栈
@@ -153,6 +139,7 @@ def simple_parser(formula: str) -> list:
         if stack != 0:
             raise ValueError(f"Unmatched parentheses in formula[{finger}]: \n'{global_formula}'\n{finger * ' ' + '^'}")
         return atom_stack
+
     return parse(formula)
 
 
@@ -184,7 +171,8 @@ def regular(w_formula: str) -> (int, dict):
                 if word in '0123456789':
                     ele += word
                 else:
-                    raise ValueError(f"Unexpected character '{word}' in formula[{e_finger}]: \n'{w_formula}'\n{e_finger * ' ' + '^'}")
+                    raise ValueError(
+                        f"Unexpected character '{word}' in formula[{e_finger}]: \n'{w_formula}'\n{e_finger * ' ' + '^'}")
             else:
                 # 说明在花括号内层
                 formula += word
@@ -195,6 +183,7 @@ def regular(w_formula: str) -> (int, dict):
     else:
         ele = 0
 
+    formula = real_formula(formula)
     result = simple_parser(formula)
     # 初始化字典
     molecule_dict = {}
@@ -212,14 +201,14 @@ def regular(w_formula: str) -> (int, dict):
             _atom_num = int(_atom_num) if _atom_num else 1
             if isinstance(_atom_name, list):
                 # 如果是列表，说明还有括号
-                parse(_atom_name, _atom_num*_multiplier)
+                parse(_atom_name, _atom_num * _multiplier)
             else:
                 # 是普通原子
                 molecule_dict[_atom_name] = molecule_dict.get(_atom_name, 0) + int(_atom_num) * _multiplier
+
     parse(result)
     return ele, molecule_dict
 
 
 if __name__ == '__main__':
-    print(simple_parser('CH3(CH2)2CH3'))
-    print(regular('CH3(CH2(CH2)2)2CH3'))
+    print(regular("Et[12]"))

@@ -46,3 +46,4 @@ print(molecule.electric_charge)
 - 结构简式：`CH3CH2OH`，`CH3(CH2)2OH`
 - 氢同位素：`D2O`，`T2O`，`CDCl3`(氘代氯仿)
 - 离子式: `{COO}-`, `{CH2(COO)2}2-`
+- 部分基团缩写: `{PhCOO}-`，`EtOH`

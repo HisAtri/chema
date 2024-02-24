@@ -46,3 +46,4 @@ print(molecule.electric_charge)
 - Structural Formula: `CH3CH2OH`, `CH3(CH2)2OH`
 - Hydrogen Isotopes: `D2O`, `T2O`, `CDCl3`(Chloroform-d)
 - Ionic Formula: `{COO}-`, `{CH2(COO)2}2-`
+- Some group abbreviations: `{PhCOO}-`, `EtOH`
